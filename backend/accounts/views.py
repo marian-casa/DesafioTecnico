@@ -42,7 +42,7 @@ class ForgotPasswordView(APIView):
     def post(self, request):
         email = request.data.get('email')
         try:
-            user = User.objets.get(email=email)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response ({'message': 'Si el email existe recibiras el codigo.'})
         
@@ -58,7 +58,7 @@ class ForgotPasswordView(APIView):
         print(f" Válido por 10 minutos")
         print(f"{'='*40}\n")
 
-        return Response({'message:' 'Si el email existe, revibirás el código.'})
+        return Response({'message:' 'Si el email existe, recibirás el código.'})
     
 class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)
@@ -93,7 +93,7 @@ class ResetPasswordView(APIView):
     def post(self, request):
         email = request.data.get('email')
         code = request.data.get('code')
-        new_password = request.get.data('new_password')
+        new_password = request.data.get('new_password')
 
         try:
             user = User.objects.get(email=email)
