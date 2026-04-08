@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-type Vista = 'login' | 'forgot' | 'verify' | 'reset';
+type Vista = 'login' | 'forgot' | 'verify' | 'reset' | 'register';
 
 @Component({
   selector: 'app-login',
@@ -39,6 +39,13 @@ export class Login {
 
   resetForm: FormGroup = this.fb.group({
     new_password: ['', [Validators.required, Validators.minLength(6)]],
+    confirm_password: ['', Validators.required]
+  }, { validators: this.passwordsMatch });
+
+  registerForm: FormGroup = this.fb.group({
+    username: ['', [Validators.required, Validators.minLength(3)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
     confirm_password: ['', Validators.required]
   }, { validators: this.passwordsMatch });
 
@@ -101,10 +108,11 @@ export class Login {
     const { email } = this.forgotForm.value;
     this.emailParaReset = email;
 
-    this.http.post('http://localhost:8000/api/forgot-password/', {email}).subscribe({
-      next: () => {
+    this.http.post<any>('http://localhost:8000/api/forgot-password/', {email}).subscribe({
+      next: (res) => {
         this.loading.set(false)
-        this.successMsg.set('Si el email existe, el codigo aparecera en la consolsa del servidor.')
+        const otpMsg = res.dev_otp
+        this.successMsg.set(otpMsg)
         setTimeout(() => this.cambiarVista('verify'), 1500)
       },
       error: () => {
@@ -130,6 +138,26 @@ export class Login {
       error: () => {
         this.loading.set(false);
         this.errorMsg.set('Código incorrecto o expirado.');
+      }
+    });
+  }
+
+  onRegister() {
+    if (this.registerForm.invalid) { this.registerForm.markAllAsTouched(); return; }
+    this.loading.set(true);
+    this.limpiarMensajes();
+
+    const { username, email, password } = this.registerForm.value;
+    this.http.post('http://localhost:8000/api/register/', { username, email, password }).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.successMsg.set('¡Cuenta creada! Ya podés iniciar sesión.');
+        setTimeout(() => this.cambiarVista('login'), 2000);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        const msg = err.error?.username?.[0] || err.error?.email?.[0] || 'Error al registrarse.';
+        this.errorMsg.set(msg);
       }
     });
   }

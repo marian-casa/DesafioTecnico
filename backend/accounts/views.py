@@ -24,13 +24,15 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         if user:
             refresh = RefreshToken.for_user(user)
+            # Agregamos el username al payload del token
+            refresh['username'] = user.username
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
                 'user': UserSerializer(user).data
             })
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
+    
 from django.utils import timezone
 from datetime import timedelta
 import random
@@ -44,21 +46,25 @@ class ForgotPasswordView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response ({'message': 'Si el email existe recibiras el codigo.'})
-        
+            return Response({'message': 'Si el email existe, recibirás el código.'})
+
         OTPCode.objects.filter(user=user, is_used=False).update(is_used=True)
 
         code = str(random.randint(100000, 999999))
         expires_at = timezone.now() + timedelta(minutes=10)
-
         OTPCode.objects.create(user=user, code=code, expires_at=expires_at)
 
         print(f"\n{'='*40}")
-        print(f" OTP para {user.username} ({user.email}): {code}")
-        print(f" Válido por 10 minutos")
+        print(f"  OTP para {user.username} ({user.email}): {code}")
+        print(f"  Válido por 10 minutos")
         print(f"{'='*40}\n")
 
-        return Response({'message:' 'Si el email existe, recibirás el código.'})
+        # En desarrollo devolvemos el código en la respuesta
+        # En producción esto se sacaría y se mandaría por email
+        return Response({
+            'message': 'Si el email existe, recibirás el código.',
+            'dev_otp': code  
+        })
     
 class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)

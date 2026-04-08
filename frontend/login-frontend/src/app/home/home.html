@@ -1,4 +1,42 @@
-<div class="welcome-container">
-  <h1>¡Bienvenido!</h1>
-  <p>Has iniciado sesión correctamente.</p>
+<div class="page-wrapper">
+  <div class="home-card">
+
+    <!-- HEADER -->
+    <div class="card-header">
+      <div class="avatar">{{ username().charAt(0).toUpperCase() }}</div>
+      <h1>¡Bienvenido, {{ username() }}!</h1>
+      <p class="subtitle">Iniciaste sesión correctamente</p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="divider"></div>
+
+    <!-- INFO CARDS -->
+    <div class="info-grid">
+      <div class="info-card">
+        <span class="info-icon">🔐</span>
+        <span class="info-label">Sesión</span>
+        <span class="info-value">Activa</span>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">🛡️</span>
+        <span class="info-label">Seguridad</span>
+        <span class="info-value">JWT</span>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">✅</span>
+        <span class="info-label">Estado</span>
+        <span class="info-value">OK</span>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="divider"></div>
+
+    <!-- LOGOUT -->
+    <button class="btn-logout" (click)="logout()">
+      Cerrar sesión
+    </button>
+
+  </div>
 </div>

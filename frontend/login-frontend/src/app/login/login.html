@@ -78,6 +78,12 @@
         </button>
 
       </form>
+      <div class="register-link">
+        <p>¿No tenés Cuenta?</p>
+        <button type="button" class="link-btn" (click)="cambiarVista('register')">
+          Registrate
+        </button>
+      </div>
     }
 
     <!-- ── VISTA: FORGOT ── -->
@@ -190,6 +196,75 @@
         </button>
       </form>
     }
+    <!-- vista -> Register -->
+    @if (vista() === 'register') {
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <p class="hint">Creá tu cuenta para acceder al sistema.</p>
 
+      <div class="field-group">
+        <label>Usuario</label>
+        <input
+          type="text"
+          formControlName="username"
+          placeholder="Nombre de usuario"
+          [class.input-error]="fieldError(registerForm, 'username')"
+        >
+        @if (fieldError(registerForm, 'username')) {
+          <span class="field-error">{{ fieldError(registerForm, 'username') }}</span>
+        }
+      </div>
+
+      <div class="field-group">
+        <label>Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="tu@email.com"
+          [class.input-error]="fieldError(registerForm, 'email')"
+        >
+        @if (fieldError(registerForm, 'email')) {
+          <span class="field-error">{{ fieldError(registerForm, 'email') }}</span>
+        }
+      </div>
+
+      <div class="field-group">
+        <label>Contraseña</label>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          [class.input-error]="fieldError(registerForm, 'password')"
+        >
+        @if (fieldError(registerForm, 'password')) {
+          <span class="field-error">{{ fieldError(registerForm, 'password') }}</span>
+        }
+      </div>
+
+      <div class="field-group">
+        <label>Confirmar contraseña</label>
+        <input
+          type="password"
+          formControlName="confirm_password"
+          placeholder="Repetí la contraseña"
+          [class.input-error]="registerForm.errors?.['mismatch'] && registerForm.get('confirm_password')?.touched"
+        >
+        @if (registerForm.errors?.['mismatch'] && registerForm.get('confirm_password')?.touched) {
+          <span class="field-error">Las contraseñas no coinciden</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        @if (loading()) {
+          <span class="loader"></span> Creando cuenta...
+        } @else {
+          Crear cuenta
+        }
+      </button>
+
+      <button type="button" class="link-btn center" (click)="cambiarVista('login')">
+        ← Ya tengo cuenta
+      </button>
+    </form>
+    }
   </div>
 </div>

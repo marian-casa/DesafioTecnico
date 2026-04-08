@@ -241,3 +241,10 @@ input.input-error {
     font-size: 20px;
   }
 }
+
+.register-link {
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 4px;
+}
